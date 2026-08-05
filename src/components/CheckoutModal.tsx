@@ -281,61 +281,61 @@ export const CheckoutModal: React.FC = () => {
             </div>
           ) : (
             <form onSubmit={handleStartPayment}>
-              {/* Shipping Address */}
-              <div className="card border-0 bg-light p-3 rounded-3 mb-3">
-                <h6 className="fw-bold text-danger mb-2 d-flex align-items-center gap-2">
-                  <i className="fas fa-truck"></i> Delivery Information
-                </h6>
-                <div className="row g-2">
-                  <div className="col-md-6">
-                    <label className="form-label small fw-bold mb-1">Full Name *</label>
+              {/* Shipping Address / Delivery Information */}
+              <div className="delivery-info-section mb-3">
+                <div className="delivery-section-title">
+                  <i className="fas fa-truck text-danger"></i> Delivery Information
+                </div>
+                <div className="delivery-form-grid">
+                  <div className="form-group span-half">
+                    <label className="delivery-label">Full Name *</label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="delivery-input"
                       placeholder="e.g. Aarav Sharma"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       required
                     />
                   </div>
-                  <div className="col-md-6">
-                    <label className="form-label small fw-bold mb-1">Mobile Number *</label>
+                  <div className="form-group span-half">
+                    <label className="delivery-label">Mobile Number *</label>
                     <input
                       type="tel"
-                      className="form-control form-control-sm"
+                      className="delivery-input"
                       placeholder="+91 98765 43210"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       required
                     />
                   </div>
-                  <div className="col-12">
-                    <label className="form-label small fw-bold mb-1">Street Address *</label>
+                  <div className="form-group span-full">
+                    <label className="delivery-label">Street Address *</label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="delivery-input"
                       placeholder="Flat No, Building, Street Name"
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       required
                     />
                   </div>
-                  <div className="col-6">
-                    <label className="form-label small fw-bold mb-1">City *</label>
+                  <div className="form-group span-half">
+                    <label className="delivery-label">City *</label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="delivery-input"
                       placeholder="e.g. Mumbai"
                       value={city}
                       onChange={(e) => setCity(e.target.value)}
                       required
                     />
                   </div>
-                  <div className="col-6">
-                    <label className="form-label small fw-bold mb-1">Pincode *</label>
+                  <div className="form-group span-half">
+                    <label className="delivery-label">Pincode *</label>
                     <input
                       type="text"
-                      className="form-control form-control-sm"
+                      className="delivery-input"
                       placeholder="400001"
                       value={pincode}
                       onChange={(e) => setPincode(e.target.value)}

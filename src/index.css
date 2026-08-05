@@ -2345,8 +2345,8 @@ body {
 .checkout-modal-content, .order-success-content, .product-modal-content, .quick-login-content {
   background: #ffffff !important;
   border-radius: 16px !important;
-  width: 520px !important;
-  max-width: 92% !important;
+  width: 100% !important;
+  max-width: 640px !important;
   max-height: 90vh !important;
   overflow-y: auto !important;
   padding: 24px !important;
@@ -2354,6 +2354,113 @@ body {
   box-shadow: 0 20px 60px rgba(0,0,0,0.35) !important;
   transform: translateY(20px) scale(0.98) !important;
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+@media (max-width: 576px) {
+  .checkout-modal-content, .order-success-content, .product-modal-content, .quick-login-content {
+    padding: 16px !important;
+    max-height: 94vh !important;
+    border-radius: 14px !important;
+    margin: 10px !important;
+  }
+}
+
+.checkout-modal-header {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding-bottom: 14px !important;
+  margin-bottom: 16px !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.checkout-modal-header h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+}
+
+.checkout-modal-header p {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin: 0;
+}
+
+.checkout-modal-body {
+  padding: 0 !important;
+}
+
+/* Delivery Information Section */
+.delivery-info-section {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.delivery-section-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #dc2626;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delivery-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.delivery-form-grid .span-full {
+  grid-column: span 2;
+}
+
+.delivery-form-grid .span-half {
+  grid-column: span 1;
+}
+
+.delivery-label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.delivery-input {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #0f172a;
+  transition: all 0.2s ease;
+  outline: none;
+  box-sizing: border-border-box;
+}
+
+.delivery-input:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+@media (max-width: 576px) {
+  .delivery-info-section {
+    padding: 12px;
+  }
+  .delivery-form-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .delivery-form-grid .span-full,
+  .delivery-form-grid .span-half {
+    grid-column: span 1;
+  }
 }
 
 .checkout-modal.is-open .checkout-modal-content,
