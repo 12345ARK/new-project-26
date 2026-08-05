@@ -119,12 +119,23 @@ export const TrackOrderModal: React.FC = () => {
     };
   };
 
-  const handleCancelOrder = () => {
+  const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false);
+  const [cancelReason, setCancelReason] = useState<string>('Ordered items by mistake');
+  const [cancelComments, setCancelComments] = useState<string>('');
+
+  const handleCancelOrderSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (!currentOrder) return;
-    if (window.confirm(`Are you sure you want to cancel order ${currentOrder.id}?`)) {
-      updateOrderStatus(currentOrder.id, 'Cancelled');
-      triggerToast('Order Cancelled', `Order ${currentOrder.id} has been cancelled.`, undefined, 'info');
-    }
+
+    const fullReason = cancelReason === 'Other' && cancelComments.trim() ? `Other: ${cancelComments.trim()}` : cancelReason;
+    updateOrderStatus(currentOrder.id, 'Cancelled');
+    setShowCancelDialog(false);
+    triggerToast(
+      'Order Cancelled 🚫',
+      `Order #${currentOrder.id} has been cancelled (${fullReason}). Refund will be processed shortly.`,
+      undefined,
+      'info'
+    );
   };
 
   // User recent orders list
@@ -489,13 +500,13 @@ export const TrackOrderModal: React.FC = () => {
 
               {/* Modal Bottom Actions */}
               <div className="d-flex flex-wrap align-items-center justify-content-between gap-2 pt-2 border-top">
-                {currentOrder.status === 'Pending' && (
+                {currentOrder.status !== 'Cancelled' && currentOrder.status !== 'Delivered' && (
                   <button
                     type="button"
-                    className="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold"
-                    onClick={handleCancelOrder}
+                    className="btn btn-outline-danger btn-sm rounded-pill px-3 fw-bold d-inline-flex align-items-center gap-1.5 shadow-xs"
+                    onClick={() => setShowCancelDialog(true)}
                   >
-                    <i className="fas fa-times-circle me-1"></i> Cancel Order
+                    <i className="fas fa-ban"></i> Cancel Order
                   </button>
                 )}
 
@@ -518,6 +529,102 @@ export const TrackOrderModal: React.FC = () => {
                   Close
                 </button>
               </div>
+
+              {/* Cancellation Reason Overlay Dialog */}
+              {showCancelDialog && (
+                <div
+                  className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center p-3 z-3"
+                  style={{ backgroundColor: 'rgba(15, 23, 42, 0.75)', backdropFilter: 'blur(4px)' }}
+                >
+                  <div className="bg-white rounded-4 shadow-lg p-4 w-100 max-w-md border animate__animated animate__fadeInUp" style={{ maxWidth: '480px' }}>
+                    <div className="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                      <div className="d-flex align-items-center gap-2">
+                        <div className="bg-danger bg-opacity-10 text-danger rounded-circle p-2 d-flex align-items-center justify-content-center" style={{ width: '36px', height: '36px' }}>
+                          <i className="fas fa-exclamation-circle fs-5"></i>
+                        </div>
+                        <div>
+                          <h5 className="fw-bold m-0 text-dark">Cancel Order #{currentOrder.id}</h5>
+                          <small className="text-muted">Select reason for order cancellation</small>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn-close shadow-none"
+                        onClick={() => setShowCancelDialog(false)}
+                      ></button>
+                    </div>
+
+                    <form onSubmit={handleCancelOrderSubmit}>
+                      <div className="mb-3">
+                        <label className="form-label small fw-bold text-dark">Why do you want to cancel this order?</label>
+                        <div className="d-flex flex-column gap-2">
+                          {[
+                            'Ordered items by mistake',
+                            'Delivery time taking too long',
+                            'Incorrect delivery address or phone',
+                            'Want to change payment method',
+                            'Found better price elsewhere',
+                            'Other'
+                          ].map((reason) => (
+                            <label
+                              key={reason}
+                              className={`p-2.5 rounded-3 border cursor-pointer d-flex align-items-center gap-2 transition-all ${
+                                cancelReason === reason ? 'border-danger bg-danger-subtle fw-semibold text-danger' : 'bg-light text-dark'
+                              }`}
+                              style={{ fontSize: '0.85rem' }}
+                            >
+                              <input
+                                type="radio"
+                                name="cancelReason"
+                                className="form-check-input mt-0"
+                                checked={cancelReason === reason}
+                                onChange={() => setCancelReason(reason)}
+                              />
+                              <span>{reason}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+                      {cancelReason === 'Other' && (
+                        <div className="mb-3">
+                          <label className="form-label small fw-bold text-muted">Additional Details (Optional)</label>
+                          <textarea
+                            className="form-control form-control-sm rounded-3"
+                            rows={2}
+                            placeholder="Please specify why you are cancelling..."
+                            value={cancelComments}
+                            onChange={(e) => setCancelComments(e.target.value)}
+                          ></textarea>
+                        </div>
+                      )}
+
+                      <div className="alert alert-warning p-2.5 rounded-3 mb-3 small d-flex align-items-start gap-2">
+                        <i className="fas fa-info-circle text-warning mt-0.5"></i>
+                        <span>
+                          If you paid using UPI, Card, or Net Banking, your payment of <strong>₹{currentOrder.total}</strong> will be refunded to your original payment account within 24-48 hours.
+                        </span>
+                      </div>
+
+                      <div className="d-flex justify-content-end gap-2 pt-2 border-top">
+                        <button
+                          type="button"
+                          className="btn btn-light btn-sm rounded-pill px-3 fw-bold border"
+                          onClick={() => setShowCancelDialog(false)}
+                        >
+                          Keep Order
+                        </button>
+                        <button
+                          type="submit"
+                          className="btn btn-danger btn-sm rounded-pill px-4 fw-bold shadow-sm d-inline-flex align-items-center gap-1.5"
+                        >
+                          <i className="fas fa-check-circle"></i> Confirm Cancellation
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           ) : (
             <div className="text-center py-5">

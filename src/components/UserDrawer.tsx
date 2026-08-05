@@ -24,6 +24,8 @@ export const UserDrawer: React.FC = () => {
     addToCart,
     setIsCartOpen,
     navigateTo,
+    openTrackOrderModal,
+    updateOrderStatus,
   } = useApp();
 
   const [activeTab, setActiveTab] = useState<'saved' | 'orders' | 'cart' | 'profile'>('saved');
@@ -291,9 +293,38 @@ export const UserDrawer: React.FC = () => {
                     <p className="small m-0 text-truncate mt-1">
                       <strong>Items:</strong> {o.items}
                     </p>
-                    <div className="d-flex justify-content-between align-items-center mt-2 pt-1 border-top">
+                    <div className="d-flex justify-content-between align-items-center mt-2 pt-2 border-top">
                       <small className="text-muted">Payment: {o.paymentMethod}</small>
                       <strong className="text-danger">₹{o.total}</strong>
+                    </div>
+
+                    {/* Order Action Buttons */}
+                    <div className="d-flex align-items-center gap-2 mt-2 pt-2 border-top">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1 flex-fill fw-bold"
+                        style={{ fontSize: '0.75rem' }}
+                        onClick={() => {
+                          setIsUserDrawerOpen(false);
+                          openTrackOrderModal(o.id);
+                        }}
+                      >
+                        <i className="fas fa-truck-fast text-danger me-1"></i> Track Order
+                      </button>
+
+                      {o.status !== 'Cancelled' && o.status !== 'Delivered' && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-outline-danger rounded-pill px-2.5 py-1 flex-fill fw-bold"
+                          style={{ fontSize: '0.75rem' }}
+                          onClick={() => {
+                            setIsUserDrawerOpen(false);
+                            openTrackOrderModal(o.id);
+                          }}
+                        >
+                          <i className="fas fa-ban me-1"></i> Cancel Order
+                        </button>
+                      )}
                     </div>
                   </div>
                 ))

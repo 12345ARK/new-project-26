@@ -91,6 +91,20 @@ export const OrderSuccessModal: React.FC = () => {
             Continue Shopping
           </button>
         </div>
+
+        <div className="text-center mt-3 pt-2 border-top">
+          <button
+            type="button"
+            className="btn btn-link text-muted text-decoration-none p-0 small"
+            style={{ fontSize: '0.78rem' }}
+            onClick={() => {
+              setIsSuccessModalOpen(false);
+              openTrackOrderModal(confirmedOrder.id);
+            }}
+          >
+            <i className="fas fa-ban me-1 text-danger"></i> Need to cancel or edit this order?
+          </button>
+        </div>
       </div>
     </div>
   );

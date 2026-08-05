@@ -26,6 +26,52 @@ export const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isMoreDropdownOpen, setIsMoreDropdownOpen] = useState(false);
 
+  // Recent Searches State
+  const [recentSearches, setRecentSearches] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('fastmart_recent_searches');
+      return saved ? JSON.parse(saved) : ['Fresh Milk', 'Organic Apples', 'Chocolates', 'Basmati Rice'];
+    } catch {
+      return ['Fresh Milk', 'Organic Apples', 'Chocolates', 'Basmati Rice'];
+    }
+  });
+
+  const saveRecentSearch = (term: string) => {
+    const trimmed = term.trim();
+    if (!trimmed) return;
+    setRecentSearches(prev => {
+      const filtered = prev.filter(item => item.toLowerCase() !== trimmed.toLowerCase());
+      const updated = [trimmed, ...filtered].slice(0, 8);
+      try {
+        localStorage.setItem('fastmart_recent_searches', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
+
+  const removeRecentSearch = (termToRemove: string) => {
+    setRecentSearches(prev => {
+      const updated = prev.filter(item => item !== termToRemove);
+      try {
+        localStorage.setItem('fastmart_recent_searches', JSON.stringify(updated));
+      } catch (e) {
+        console.error(e);
+      }
+      return updated;
+    });
+  };
+
+  const clearRecentSearches = () => {
+    setRecentSearches([]);
+    try {
+      localStorage.removeItem('fastmart_recent_searches');
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const navRef = useRef<HTMLElement>(null);
   const desktopSearchRef = useRef<HTMLDivElement>(null);
 
@@ -47,15 +93,14 @@ export const Navbar: React.FC = () => {
 
   const handleSearchChange = (query: string) => {
     setSearchQuery(query);
+    setIsSearchOpen(true);
     if (!query.trim()) {
       setSearchResults([]);
-      setIsSearchOpen(false);
       return;
     }
     const q = query.toLowerCase().trim();
     const matches = ALL_PRODUCTS.filter(p => p.title.toLowerCase().includes(q));
     setSearchResults(matches);
-    setIsSearchOpen(true);
   };
 
   const handleMobileSearchChange = (query: string) => {
@@ -70,12 +115,23 @@ export const Navbar: React.FC = () => {
   };
 
   const handleProductSelect = (product: Product) => {
+    if (searchQuery.trim()) {
+      saveRecentSearch(searchQuery.trim());
+    } else {
+      saveRecentSearch(product.title);
+    }
     setSelectedProductModal(product);
     setIsSearchOpen(false);
     setSearchQuery('');
     setMobileSearchQuery('');
     setIsMobileSearchActive(false);
     setIsMobileMenuOpen(false);
+  };
+
+  const handleKeyDownSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && searchQuery.trim()) {
+      saveRecentSearch(searchQuery);
+    }
   };
 
   return (
@@ -95,31 +151,114 @@ export const Navbar: React.FC = () => {
             placeholder="Search catalog..."
             value={searchQuery}
             onChange={(e) => handleSearchChange(e.target.value)}
-            onFocus={() => searchQuery.trim() && setIsSearchOpen(true)}
+            onFocus={() => setIsSearchOpen(true)}
+            onKeyDown={handleKeyDownSearch}
           />
-          <button className="search-btn" title="Search">
+          <button
+            className="search-btn"
+            title="Search"
+            onClick={() => {
+              if (searchQuery.trim()) {
+                saveRecentSearch(searchQuery);
+                setIsSearchOpen(true);
+              }
+            }}
+          >
             <i className="fas fa-search"></i>
           </button>
 
           {/* Search Dropdown */}
           {isSearchOpen && (
             <div className="search-results-dropdown active">
-              {searchResults.length > 0 ? (
-                searchResults.slice(0, 8).map(product => (
-                  <div
-                    key={product.id}
-                    className="search-item"
-                    onClick={() => handleProductSelect(product)}
-                  >
-                    <img src={product.image} alt={product.title} />
-                    <div>
-                      <h4>{product.title}</h4>
-                      <p>₹{product.price}{product.unit ? product.unit : ''}</p>
+              {searchQuery.trim() ? (
+                searchResults.length > 0 ? (
+                  searchResults.slice(0, 8).map(product => (
+                    <div
+                      key={product.id}
+                      className="search-item"
+                      onClick={() => handleProductSelect(product)}
+                    >
+                      <img src={product.image} alt={product.title} />
+                      <div>
+                        <h4>{product.title}</h4>
+                        <p>₹{product.price}{product.unit ? product.unit : ''}</p>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="no-result">No products found</div>
+                )
+              ) : (
+                /* Recent Searches Section */
+                recentSearches.length > 0 ? (
+                  <div className="p-2 bg-white">
+                    <div className="d-flex align-items-center justify-content-between pb-2 mb-1 border-bottom">
+                      <span className="small text-muted fw-bold d-flex align-items-center gap-1.5" style={{ fontSize: '0.78rem' }}>
+                        <i className="fas fa-history text-danger"></i> Recent Searches
+                      </span>
+                      <button
+                        type="button"
+                        className="btn btn-link text-muted p-0 text-decoration-none"
+                        style={{ fontSize: '0.75rem' }}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          clearRecentSearches();
+                        }}
+                      >
+                        Clear All
+                      </button>
+                    </div>
+                    <div className="d-flex flex-column gap-1">
+                      {recentSearches.map((term, idx) => (
+                        <div
+                          key={idx}
+                          className="d-flex align-items-center justify-content-between p-2 rounded-2 hover-bg-light cursor-pointer transition-all"
+                          style={{ fontSize: '0.88rem' }}
+                          onClick={() => {
+                            handleSearchChange(term);
+                            saveRecentSearch(term);
+                          }}
+                        >
+                          <div className="d-flex align-items-center gap-2 text-dark">
+                            <i className="fas fa-clock text-muted" style={{ fontSize: '0.8rem' }}></i>
+                            <span>{term}</span>
+                          </div>
+                          <button
+                            type="button"
+                            className="btn btn-sm text-muted p-0 border-0 hover-text-danger"
+                            title="Remove from history"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              removeRecentSearch(term);
+                            }}
+                          >
+                            <i className="fas fa-times" style={{ fontSize: '0.8rem' }}></i>
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="no-result">No products found</div>
+                ) : (
+                  <div className="p-3 bg-white text-center">
+                    <small className="text-muted d-block mb-2">Popular Categories</small>
+                    <div className="d-flex flex-wrap justify-content-center gap-1.5">
+                      {['Vegetables', 'Fruits', 'Biscuits', 'Chocolates', 'Spices'].map(cat => (
+                        <button
+                          key={cat}
+                          type="button"
+                          className="btn btn-sm btn-light border rounded-pill px-2.5 py-1"
+                          style={{ fontSize: '0.78rem' }}
+                          onClick={() => {
+                            handleSearchChange(cat);
+                            saveRecentSearch(cat);
+                          }}
+                        >
+                          {cat}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
               )}
             </div>
           )}
@@ -289,25 +428,97 @@ export const Navbar: React.FC = () => {
         </div>
       )}
 
-      {/* Mobile Search Results */}
-      {isMobileSearchActive && mobileSearchQuery.trim() && (
-        <div className="mobile-search-results active">
-          {searchResults.length > 0 ? (
-            searchResults.map(product => (
-              <div
-                key={product.id}
-                className="search-item"
-                onClick={() => handleProductSelect(product)}
-              >
-                <img src={product.image} alt={product.title} />
-                <div>
-                  <h4>{product.title}</h4>
-                  <p>₹{product.price}{product.unit ? product.unit : ''}</p>
+      {/* Mobile Search Results & Recent Searches */}
+      {isMobileSearchActive && (
+        <div className="mobile-search-results active" style={{ maxHeight: '350px', overflowY: 'auto' }}>
+          {mobileSearchQuery.trim() ? (
+            searchResults.length > 0 ? (
+              searchResults.map(product => (
+                <div
+                  key={product.id}
+                  className="search-item"
+                  onClick={() => handleProductSelect(product)}
+                >
+                  <img src={product.image} alt={product.title} />
+                  <div>
+                    <h4>{product.title}</h4>
+                    <p>₹{product.price}{product.unit ? product.unit : ''}</p>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="no-result">No products found</div>
+            )
+          ) : (
+            recentSearches.length > 0 ? (
+              <div className="p-3 bg-white">
+                <div className="d-flex align-items-center justify-content-between pb-2 mb-2 border-bottom">
+                  <span className="small text-muted fw-bold d-flex align-items-center gap-1.5" style={{ fontSize: '0.8rem' }}>
+                    <i className="fas fa-history text-danger"></i> Recent Searches
+                  </span>
+                  <button
+                    type="button"
+                    className="btn btn-link text-muted p-0 text-decoration-none"
+                    style={{ fontSize: '0.78rem' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearRecentSearches();
+                    }}
+                  >
+                    Clear All
+                  </button>
+                </div>
+                <div className="d-flex flex-column gap-1.5">
+                  {recentSearches.map((term, idx) => (
+                    <div
+                      key={idx}
+                      className="d-flex align-items-center justify-content-between p-2 rounded-2 bg-light cursor-pointer"
+                      style={{ fontSize: '0.88rem' }}
+                      onClick={() => {
+                        handleMobileSearchChange(term);
+                        saveRecentSearch(term);
+                      }}
+                    >
+                      <div className="d-flex align-items-center gap-2 text-dark">
+                        <i className="fas fa-clock text-muted" style={{ fontSize: '0.8rem' }}></i>
+                        <span>{term}</span>
+                      </div>
+                      <button
+                        type="button"
+                        className="btn btn-sm text-muted p-0 border-0"
+                        title="Remove from history"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeRecentSearch(term);
+                        }}
+                      >
+                        <i className="fas fa-times" style={{ fontSize: '0.8rem' }}></i>
+                      </button>
+                    </div>
+                  ))}
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="no-result">No products found</div>
+            ) : (
+              <div className="p-3 bg-white text-center">
+                <small className="text-muted d-block mb-2">Popular Categories</small>
+                <div className="d-flex flex-wrap justify-content-center gap-1.5">
+                  {['Vegetables', 'Fruits', 'Biscuits', 'Chocolates', 'Spices'].map(cat => (
+                    <button
+                      key={cat}
+                      type="button"
+                      className="btn btn-sm btn-light border rounded-pill px-2.5 py-1"
+                      style={{ fontSize: '0.78rem' }}
+                      onClick={() => {
+                        handleMobileSearchChange(cat);
+                        saveRecentSearch(cat);
+                      }}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )
           )}
         </div>
       )}
