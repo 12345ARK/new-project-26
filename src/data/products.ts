@@ -14,7 +14,7 @@ export const ALL_PRODUCTS: Product[] = [
     id: 'f-2',
     title: 'Banana',
     price: 60,
-    unit: '/kg',
+    unit: '/dozen',
     image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8KwARHg9glIy29RMCS9x2h-tN0vG84FZevfey8--ckA&s=10',
     category: 'fruits'
   },

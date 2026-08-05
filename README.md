@@ -34,7 +34,7 @@ Make sure you have **Node.js** (v18 or higher) and **npm** installed on your com
 ### 1. Clone the Repository
 
 ```bash
-https://github.com/12345ARK/new-project-26.git
+git clone https://github.com/YOUR_USERNAME/YOUR_REPOSITORY.git
 cd YOUR_REPOSITORY
 ```
 
