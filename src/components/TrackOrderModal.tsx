@@ -17,6 +17,9 @@ export const TrackOrderModal: React.FC = () => {
 
   const [searchInput, setSearchInput] = useState('');
   const [activeOrderId, setActiveOrderId] = useState<string | null>(trackingOrderId);
+  const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false);
+  const [cancelReason, setCancelReason] = useState<string>('Ordered items by mistake');
+  const [cancelComments, setCancelComments] = useState<string>('');
 
   // Sync active order when modal opens or trackingOrderId changes
   useEffect(() => {
@@ -118,10 +121,6 @@ export const TrackOrderModal: React.FC = () => {
       eta: '12-18 Mins',
     };
   };
-
-  const [showCancelDialog, setShowCancelDialog] = useState<boolean>(false);
-  const [cancelReason, setCancelReason] = useState<string>('Ordered items by mistake');
-  const [cancelComments, setCancelComments] = useState<string>('');
 
   const handleCancelOrderSubmit = (e: React.FormEvent) => {
     e.preventDefault();

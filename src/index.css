@@ -556,13 +556,24 @@ body {
 /* Category Icon Slider */
 .icon-slider {
   display: flex;
+  align-items: center;
   overflow-x: auto;
+  overflow-y: hidden;
   margin-top: 20px;
-  gap: 12px;
-  padding: 20px;
-  justify-content: space-evenly;
+  gap: 16px;
+  padding: 16px 20px;
+  justify-content: flex-start;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .icon-slider {
+    justify-content: center;
+  }
 }
 
 .icon-slider::-webkit-scrollbar {
@@ -1583,24 +1594,39 @@ body {
   font-size: 0.9rem;
 }
 
-/* Filter Section & Pills */
+/* Filter Section & Pills - Fully Responsive Horizontal Bar */
 .filter-section {
   background: white;
-  padding: 15px 0;
+  padding: 10px 0;
   border-bottom: 1px solid var(--border-color);
   position: sticky;
   top: 70px;
   z-index: 99;
-  box-shadow: 0 4px 6px -6px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 6px -6px rgba(0,0,0,0.08);
+  width: 100%;
 }
 
 .filter-wrapper {
   display: flex;
+  align-items: center;
   gap: 10px;
   overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
-  padding: 5px 15px;
-  justify-content: center;
+  padding: 6px 16px;
+  justify-content: flex-start;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 992px) {
+  .filter-wrapper {
+    justify-content: center;
+  }
 }
 
 .filter-wrapper::-webkit-scrollbar {
@@ -1608,23 +1634,36 @@ body {
 }
 
 .filter-pill {
-  background: var(--light-color);
-  border: 1px solid var(--border-color);
-  color: var(--text-dark);
-  padding: 8px 22px;
-  border-radius: 25px;
-  font-size: 0.95rem;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  background: var(--light-color, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-dark, #334155);
+  padding: 8px 20px;
+  border-radius: 9999px;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
+  user-select: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  touch-action: manipulation;
 }
 
-.filter-pill.active,
-.filter-pill:hover {
-  background: var(--primary-color);
+.filter-pill.active {
+  background: var(--primary-color, #dc2626);
   color: white;
-  border-color: var(--primary-color);
+  border-color: var(--primary-color, #dc2626);
+  box-shadow: 0 2px 8px rgba(220, 38, 38, 0.25);
   transform: translateY(-1px);
+}
+
+.filter-pill:hover:not(.active) {
+  background: #f1f5f9;
+  color: #0f172a;
+  border-color: #cbd5e1;
 }
 
 .item-hidden {
