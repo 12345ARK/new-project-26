@@ -1,0 +1,6 @@
+{
+  "name": "FastMart",
+  "description": "FastMart - Premium Fresh Groceries & Household Essentials Store built with React and Vite.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,72 @@
+{
+  "entities": {
+    "products": {
+      "title": "products",
+      "description": "Store items available for purchase",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "price": { "type": "number" },
+        "unit": { "type": "string" },
+        "image": { "type": "string" },
+        "category": { "type": "string" },
+        "subCategory": { "type": "string" },
+        "benefits": { "type": "string" },
+        "expiry": { "type": "string" },
+        "rating": { "type": "number" }
+      },
+      "required": ["id", "title", "price", "image", "category"]
+    },
+    "orders": {
+      "title": "orders",
+      "description": "Customer purchase orders",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customer": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "paymentMethod": { "type": "string" },
+        "items": { "type": "string" },
+        "total": { "type": "number" },
+        "date": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "customer", "total", "status"]
+    },
+    "feedbacks": {
+      "title": "feedbacks",
+      "description": "Customer reviews and feedback submissions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "category": { "type": "string" },
+        "rating": { "type": "number" },
+        "message": { "type": "string" },
+        "date": { "type": "string" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "category", "rating", "message", "status"]
+    },
+    "users": {
+      "title": "users",
+      "description": "Registered user profile documents",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "phone": { "type": "string" },
+        "address": { "type": "string" },
+        "street": { "type": "string" },
+        "city": { "type": "string" },
+        "pincode": { "type": "string" },
+        "role": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    }
+  }
+}
